@@ -44,6 +44,15 @@ public class BatchConfiguration {
     }
 
     @Bean
+    public PersonItemProcessor processor() {
+        return new PersonItemProcessor();
+    }
+    @Bean
+    public StringItemToNumberProcessor stringItemToNumberProcessor(){
+        return new StringItemToNumberProcessor();
+    }
+
+    @Bean
     public JdbcBatchItemWriter<Person> writer() {
         JdbcBatchItemWriter<Person> writer = new JdbcBatchItemWriter<Person>();
         writer.setItemSqlParameterSourceProvider(new BeanPropertyItemSqlParameterSourceProvider<Person>());
@@ -52,7 +61,7 @@ public class BatchConfiguration {
         return writer;
     }
 
-    // TODO to create another job
+
     @Bean
     public Job importUserJob(JobCompletionNotificationListener listener) {
         return jobBuilderFactory.get("importUserJob")
@@ -68,10 +77,40 @@ public class BatchConfiguration {
         return stepBuilderFactory.get("step1")
                 .<Person, Person> chunk(10)
                 .reader(reader())
+                .processor(processor())
                 .writer(writer())
                 .build();
     }
 
 
+    @Bean
+    public StringItemReader stringItemReader(){
+        PopulateString.populateString();
+        return new StringItemReader();
+    }
+
+    @Bean
+    public StringItemWriter stringItemWriter(){
+        return new StringItemWriter();
+    }
+
+    @Bean
+    public Job stringToNumber() {
+        return jobBuilderFactory.get("stringToNumber")
+                .incrementer(new RunIdIncrementer())
+                .flow(step2())
+                .end()
+                .build();
+    }
+
+    @Bean
+    public Step step2() {
+        return stepBuilderFactory.get("step2")
+                .<String, Integer>chunk(1)
+                .reader(stringItemReader())
+                .processor(stringItemToNumberProcessor())
+                .writer(stringItemWriter())
+                .build();
+    }
 
 }

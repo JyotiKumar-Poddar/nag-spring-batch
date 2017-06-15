@@ -38,25 +38,9 @@ public class BatchConfiguration {
     @Autowired
     public DataSource dataSource;
 
-    // tag::readerwriterprocessor[]
     @Bean
-    public FlatFileItemReader<Person> reader() {
-        FlatFileItemReader<Person> reader = new FlatFileItemReader<Person>();
-        reader.setResource(new ClassPathResource("sample-data.csv"));
-        reader.setLineMapper(new DefaultLineMapper<Person>() {{
-            setLineTokenizer(new DelimitedLineTokenizer() {{
-                setNames(new String[] { "firstName", "lastName" });
-            }});
-            setFieldSetMapper(new BeanWrapperFieldSetMapper<Person>() {{
-                setTargetType(Person.class);
-            }});
-        }});
-        return reader;
-    }
-
-    @Bean
-    public PersonItemProcessor processor() {
-        return new PersonItemProcessor();
+    public PersonFlatFileItemReader reader() {
+        return new PersonFlatFileItemReader();
     }
 
     @Bean
@@ -67,9 +51,8 @@ public class BatchConfiguration {
         writer.setDataSource(dataSource);
         return writer;
     }
-    // end::readerwriterprocessor[]
 
-    // tag::jobstep[]
+    // TODO to create another job
     @Bean
     public Job importUserJob(JobCompletionNotificationListener listener) {
         return jobBuilderFactory.get("importUserJob")
@@ -85,9 +68,10 @@ public class BatchConfiguration {
         return stepBuilderFactory.get("step1")
                 .<Person, Person> chunk(10)
                 .reader(reader())
-                .processor(processor())
                 .writer(writer())
                 .build();
     }
-    // end::jobstep[]
+
+
+
 }

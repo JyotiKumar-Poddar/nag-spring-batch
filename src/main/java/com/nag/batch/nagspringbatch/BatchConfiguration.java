@@ -1,6 +1,9 @@
 package com.nag.batch.nagspringbatch;
 
 
+import com.nag.batch.nagspringbatch.stringtonumberjob.StringItemReader;
+import com.nag.batch.nagspringbatch.stringtonumberjob.StringItemToNumberProcessor;
+import com.nag.batch.nagspringbatch.stringtonumberjob.StringItemWriter;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
@@ -9,14 +12,9 @@ import org.springframework.batch.core.configuration.annotation.StepBuilderFactor
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.item.database.BeanPropertyItemSqlParameterSourceProvider;
 import org.springframework.batch.item.database.JdbcBatchItemWriter;
-import org.springframework.batch.item.file.FlatFileItemReader;
-import org.springframework.batch.item.file.mapping.BeanWrapperFieldSetMapper;
-import org.springframework.batch.item.file.mapping.DefaultLineMapper;
-import org.springframework.batch.item.file.transform.DelimitedLineTokenizer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.io.ClassPathResource;
 
 import javax.sql.DataSource;
 
@@ -47,10 +45,7 @@ public class BatchConfiguration {
     public PersonItemProcessor processor() {
         return new PersonItemProcessor();
     }
-    @Bean
-    public StringItemToNumberProcessor stringItemToNumberProcessor(){
-        return new StringItemToNumberProcessor();
-    }
+
 
     @Bean
     public JdbcBatchItemWriter<Person> writer() {
@@ -83,34 +78,5 @@ public class BatchConfiguration {
     }
 
 
-    @Bean
-    public StringItemReader stringItemReader(){
-        PopulateString.populateString();
-        return new StringItemReader();
-    }
-
-    @Bean
-    public StringItemWriter stringItemWriter(){
-        return new StringItemWriter();
-    }
-
-    @Bean
-    public Job stringToNumber() {
-        return jobBuilderFactory.get("stringToNumber")
-                .incrementer(new RunIdIncrementer())
-                .flow(step2())
-                .end()
-                .build();
-    }
-
-    @Bean
-    public Step step2() {
-        return stepBuilderFactory.get("step2")
-                .<String, Integer>chunk(1)
-                .reader(stringItemReader())
-                .processor(stringItemToNumberProcessor())
-                .writer(stringItemWriter())
-                .build();
-    }
 
 }

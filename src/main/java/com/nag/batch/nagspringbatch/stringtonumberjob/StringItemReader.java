@@ -1,5 +1,6 @@
-package com.nag.batch.nagspringbatch;
+package com.nag.batch.nagspringbatch.stringtonumberjob;
 
+import com.nag.batch.nagspringbatch.PopulateString;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.NonTransientResourceException;
 import org.springframework.batch.item.ParseException;

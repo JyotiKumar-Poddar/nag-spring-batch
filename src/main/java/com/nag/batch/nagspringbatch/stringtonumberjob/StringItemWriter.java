@@ -1,4 +1,4 @@
-package com.nag.batch.nagspringbatch;
+package com.nag.batch.nagspringbatch.stringtonumberjob;
 
 import org.springframework.batch.item.ItemWriter;
 

@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+// TODO job parameter and its validation
+
 /**
  * Created by jyotipoddar on 6/16/2017.
  */
@@ -48,7 +50,7 @@ public class StringToNumberBatchConfiguration {
     }
 
 
-    //job listner
+    //job listener
 
     @Bean
     public CustomJobExecutionListener customJobExecutionListener(){
@@ -57,13 +59,16 @@ public class StringToNumberBatchConfiguration {
 
     @Bean
     public Job stringToNumber(final CustomJobExecutionListener customJobExecutionListener) {
-        return jobBuilderFactory.get("stringToNumber")
-
+        Job stringToNumberJob = jobBuilderFactory.get("stringToNumber")
                 .incrementer(new RunIdIncrementer())
                 .listener(customJobExecutionListener)
                 .flow(step2())
                 .end()
                 .build();
+
+        stringToNumberJob.isRestartable();
+
+        return stringToNumberJob;
     }
 
     @Bean

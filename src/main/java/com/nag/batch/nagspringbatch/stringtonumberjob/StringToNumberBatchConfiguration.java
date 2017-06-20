@@ -75,7 +75,7 @@ public class StringToNumberBatchConfiguration {
     public Step step2() {
         return stepBuilderFactory.get("stringToNumber")
                 .listener((customStepListener()))
-                .<String, Integer>chunk(1)
+                .<String, Integer>chunk(10)
                 .reader(stringItemReader())
                 .processor(stringItemToNumberProcessor())
                 .writer(stringItemWriter())

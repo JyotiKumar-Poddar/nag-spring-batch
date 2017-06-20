@@ -31,9 +31,9 @@ public class JobLauncherController {
     private List<Job> jobs;
 
     @RequestMapping("/jobLauncher")
-    public void handle() throws Exception {
+    public String handle() throws Exception {
 
-        LOG.info("Sring batch job from the controller");
+        LOG.info("Spring batch job from the controller");
         Map<String, JobParameter> parametersMap;
 
         for (Job job : jobs) {
@@ -43,5 +43,6 @@ public class JobLauncherController {
             jobLauncher.run(job, jobParameters);
         }
 
+        return "Welcome to spring batch job execution controller, You can check execution status on console";
     }
 }

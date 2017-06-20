@@ -33,7 +33,7 @@ public class JobLauncherController {
     @RequestMapping("/jobLauncher")
     public void handle() throws Exception {
 
-        LOG.info("=========== Spring batch job from the controller");
+        LOG.info("Sring batch job from the controller");
         Map<String, JobParameter> parametersMap;
 
         for (Job job : jobs) {
